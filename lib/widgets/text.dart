@@ -23,3 +23,29 @@ Widget inputText(
     ),
   );
 }
+
+Widget medicineCard({String name}) {
+  return Card(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ListTile(
+          leading: Icon(Icons.album),
+          title: Text(name),
+        ),
+        ButtonBar(
+          children: <Widget>[
+            FlatButton(
+              child: const Text('test'),
+              onPressed: () {/* ... */},
+            ),
+            FlatButton(
+              child: const Text('test 2'),
+              onPressed: () {/* ... */},
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
