@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vecchio/pages/medicines.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '.././widgets/inputs.dart';
 import '.././widgets/text.dart';
 import 'settings.dart';
@@ -23,7 +23,6 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // views setter
   int _currView = 0;
   List<Widget> _views = <Widget>[
     MedicinesPage(),
@@ -35,9 +34,85 @@ class _HomePageState extends State<HomePage> {
     });
     print(view);
   }
+  final databaseReference = Firestore.instance;
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('FireStore Demo'),
+      ),
+      body: Center(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          RaisedButton(
+            child: Text('Create Record'),
+            onPressed: () {
+              createRecord();
+            },
+          ),
+          RaisedButton(
+            child: Text('View Record'),
+            onPressed: () {
+              getData();
+            },
+          ),
+          RaisedButton(
+            child: Text('Update Record'),
+            onPressed: () {
+              updateData();
+            },
+          ),
+          RaisedButton(
+            child: Text('Delete Record'),
+            onPressed: () {
+              deleteData();
+            },
+          ),
+        ],
+      )), //center
+    );
+  }
+
+  void createRecord() async {
+    await databaseReference.collection("Medicine")
+        .document("Luigi")
+        .setData({
+          'Medicine': 3
+        });
+  }
+
+  void getData() {
+    databaseReference
+        .collection("Medicine")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => print('${f.data}}'));
+    });
+  }
+
+  void updateData() {
+    try {
+      databaseReference
+          .collection('Medicine')
+          .document('Luigi')
+          .updateData({'Medicine': 2});
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void deleteData() {
+    try {
+      databaseReference
+          .collection('Medicine')
+          .document('Luigi')
+          .delete();
+    } catch (e) {
+      print(e.toString());
+    }
+/*
         appBar: AppBar(
           title: const Text('Home'),
         ),
@@ -45,6 +120,6 @@ class _HomePageState extends State<HomePage> {
           child: _views.elementAt(_currView),
         ),
         bottomNavigationBar:
-            homeBottomBar(view: _currView, onTap: _onItemTapped));
+            homeBottomBar(view: _currView, onTap: _onItemTapped));*/
   }
 }
