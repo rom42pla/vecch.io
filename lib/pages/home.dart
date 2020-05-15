@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '.././widgets/inputs.dart';
 import '.././widgets/text.dart';
 
@@ -21,34 +22,114 @@ class _HomePageState extends State<HomePage> {
   }
 
   // views setter
-  int _currView = 0;
-  List<Widget> _views = <Widget>[
-    Text(
-      'Index 0: Home',
-    ),
-    Text(
-      'Index 1: Business',
-    ),
-    Text(
-      'Index 2: School',
-    ),
-  ];
-  void _onItemTapped(int view) {
-    setState(() {
-      _currView = view;
-    });
-    print(view);
-  }
+  // int _currView = 0;
+  // List<Widget> _views = <Widget>[
+  //   Text(
+  //     'Index 0: Home',
+  //   ),
+  //   Text(
+  //     'Index 1: Business',
+  //   ),
+  //   Text(
+  //     'Index 2: School',
+  //   ),
+  // ];
+  // void _onItemTapped(int view) {
+  //   setState(() {
+  //     _currView = view;
+  //   });
+  //   print(view);
+  // }
 
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //       appBar: AppBar(
+  //         title: Text("vecch.io"),
+  //       ),
+  //       body: Center(
+  //         child: _views.elementAt(_currView),
+  //       ),
+  //       bottomNavigationBar:
+  //           homeBottomBar(view: _currView, onTap: _onItemTapped));
+  // }
+
+  final databaseReference = Firestore.instance;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("vecch.io"),
-        ),
-        body: Center(
-          child: _views.elementAt(_currView),
-        ),
-        bottomNavigationBar:
-            homeBottomBar(view: _currView, onTap: _onItemTapped));
+      appBar: AppBar(
+        title: Text('FireStore Demo'),
+      ),
+      body: Center(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          RaisedButton(
+            child: Text('Create Record'),
+            onPressed: () {
+              createRecord();
+            },
+          ),
+          RaisedButton(
+            child: Text('View Record'),
+            onPressed: () {
+              getData();
+            },
+          ),
+          RaisedButton(
+            child: Text('Update Record'),
+            onPressed: () {
+              updateData();
+            },
+          ),
+          RaisedButton(
+            child: Text('Delete Record'),
+            onPressed: () {
+              deleteData();
+            },
+          ),
+        ],
+      )), //center
+    );
+  }
+
+  void createRecord() async {
+    await databaseReference.collection("Medicine")
+        .document("Luigi")
+        .setData({
+          'Medicine': 3
+        });
+  }
+
+  void getData() {
+    databaseReference
+        .collection("Medicine")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => print('${f.data}}'));
+    });
+  }
+
+  void updateData() {
+    try {
+      databaseReference
+          .collection('Medicine')
+          .document('Luigi')
+          .updateData({'Medicine': 2});
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void deleteData() {
+    try {
+      databaseReference
+          .collection('Medicine')
+          .document('Luigi')
+          .delete();
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
