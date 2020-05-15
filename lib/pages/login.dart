@@ -23,9 +23,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+        /*appBar: AppBar(
           title: Text("vecch.io"),
-        ),
+        ),*/
         body: Row(
           children: <Widget>[
             Expanded(
@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     inputText(
-                        label: "username or email",
+                        label: "username",
                         icon: Icons.mail,
                         controller: usernameController),
                     SizedBox(height: 20.0),
@@ -52,13 +52,14 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 20.0),
                     Row(children: <Widget>[
                       Expanded(
-                        flex: 5,
-                        child: loginButton(
-                            newPage: HomePage(),
-                            context: context,
-                            usernameController: usernameController,
-                            passwordController: passwordController),
-                      ),
+                          flex: 5,
+                          child: Builder(
+                            builder: (context) => loginButton(
+                                newPage: HomePage(),
+                                context: context,
+                                usernameController: usernameController,
+                                passwordController: passwordController),
+                          )),
                       Expanded(
                         flex: 5,
                         child: registerButton(

@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vecchio/pages/medicines.dart';
 import '.././widgets/inputs.dart';
 import '.././widgets/text.dart';
+import 'settings.dart';
+import 'medicines.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -23,15 +26,8 @@ class _HomePageState extends State<HomePage> {
   // views setter
   int _currView = 0;
   List<Widget> _views = <Widget>[
-    Text(
-      'Index 0: Home',
-    ),
-    Text(
-      'Index 1: Business',
-    ),
-    Text(
-      'Index 2: School',
-    ),
+    MedicinesPage(),
+    SettingsPage()
   ];
   void _onItemTapped(int view) {
     setState(() {
@@ -43,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("vecch.io"),
+          title: const Text('Home'),
         ),
         body: Center(
           child: _views.elementAt(_currView),
