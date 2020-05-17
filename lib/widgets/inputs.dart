@@ -3,47 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:vecchio/pages/home.dart';
 import 'package:vecchio/pages/login.dart';
 import 'package:vecchio/providers/database.dart';
-import 'package:unicorndial/unicorndial.dart';
-
-Widget loginButton(
-    {var newPage,
-    BuildContext context,
-    TextEditingController usernameController,
-    TextEditingController passwordController}) {
-  return FlatButton(
-    onPressed: () async {
-      String username = usernameController.text.trim().toLowerCase();
-      String password = passwordController.text.trim().toLowerCase();
-      if (newPage != null) {
-        // check if this username or password exists
-        if (username != "test") {
-          // TODO implement database check for username
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text("Username not registered"),
-          ));
-        } else {
-          // check if password is correct
-          if (password != "test") {
-            // TODO implement database check for password
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text("Wrong password"),
-            ));
-          }
-          // if everything is correct, boot the homepage
-          else {
-            DatabaseProvider dbProvider = new DatabaseProvider();
-            dbProvider.saveUserCredentials(username);
-            print("Logged $username with password $password");
-            FocusScope.of(context).unfocus();
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
-          }
-        }
-      }
-    },
-    child: Text("LOGIN"),
-  );
-}
 
 Widget registerButton(
     {TextEditingController usernameController,
@@ -56,18 +15,6 @@ Widget registerButton(
       print(username + " " + password);
     },
     child: Text("REGISTER"),
-  );
-}
-
-Widget logoutButton({BuildContext context}) {
-  return FlatButton(
-    onPressed: () {
-      DatabaseProvider dbProvider = new DatabaseProvider();
-      dbProvider.clearDatabase();
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
-    },
-    child: Text("LOGOUT", style: TextStyle(color: Colors.red)),
   );
 }
 
@@ -87,54 +34,6 @@ Widget homeBottomBar({var view, var onTap}) {
     //selectedItemColor: Colors.brown,
     onTap: onTap,
   );
-}
-
-Widget addMedicineButton({BuildContext context, bool miniButtons = true}) {
-  List<UnicornButton> children = [];
-  children.add(UnicornButton(
-      hasLabel: true,
-      labelText: "Medicine to take once",
-      currentButton: FloatingActionButton(
-        heroTag: "once",
-        backgroundColor: Colors.green[500],
-        mini: miniButtons,
-        child: Icon(Icons.play_arrow),
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) => OnceMedicineDialog());
-        },
-      )));
-  children.add(UnicornButton(
-      hasLabel: true,
-      labelText: "Medicine to take weekly",
-      currentButton: FloatingActionButton(
-        heroTag: "weekly",
-        backgroundColor: Colors.green[500],
-        mini: miniButtons,
-        child: Icon(Icons.replay),
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) => OnceMedicineDialog());
-        },
-      )));
-  children.add(UnicornButton(
-      hasLabel: true,
-      labelText: "Medicine to take monthly",
-      currentButton: FloatingActionButton(
-        heroTag: "monthly",
-        backgroundColor: Colors.green[500],
-        mini: miniButtons,
-        child: Icon(Icons.replay_30),
-        onPressed: () => print("ok"),
-      )));
-
-  return UnicornDialer(
-      parentButtonBackground: Colors.green,
-      orientation: UnicornOrientation.VERTICAL,
-      parentButton: Icon(Icons.add),
-      childButtons: children);
 }
 
 class OnceMedicineDialog extends StatefulWidget {
