@@ -323,7 +323,7 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
     ));
 
     ///
-    /// active alarms
+    /// active alarms (This is the list of current alarm into the database)
     ///
     _alarmTiles = new List<Widget>();
     for (int _alarmIndex = 0; _alarmIndex < _alarms.length; _alarmIndex++) {
@@ -365,19 +365,20 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
             break;
           }
       }
-      bool removed = false;
       _alarmTiles.add(Opacity(opacity: 1,
           child: ListTile(
         title: Text(title),
         subtitle: Text(description),
-        /* todo add working delete button
         trailing: FlatButton(
           child: Icon(Icons.delete),
           onPressed: () async {
             await DatabaseProvider()
                 .deleteAlarm(medicineName: _medicineName, index: _alarmIndex);
+            setState(() {
+              _alarms.remove(_alarms[_alarmIndex]);
+            });
           },
-        ),*/
+        ),
       )));
     }
 
