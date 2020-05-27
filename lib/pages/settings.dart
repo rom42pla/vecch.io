@@ -37,9 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
               _registrationDate =
                   DateTime.parse(snapshot.data["registration_date"]);
             } catch (e) {
-              _registrationDate = DateTime(1492
-
-              );
+              _registrationDate = DateTime(1492);
             }
             return Scaffold(
                 body: ListView(
