@@ -161,17 +161,32 @@ class DatabaseProvider {
   Future<void> addMedicine({String medicineName, int slot}) async {
     String _username =
         (await getLoggedUserCredentialsFromLocalStorage())["username"];
-    await _databaseReference
-        .collection("medicines")
-        .document("$_username")
-        .updateData({
-      medicineName: {
-        'container_slot': slot,
-        'registration_date': DateTime.now().toString(),
-        'alarms': [],
-        'assumptions_dates': []
-      }
-    });
+    if (!(await getMedicines()).containsKey(medicineName)){
+      await _databaseReference
+          .collection("medicines")
+          .document("$_username")
+          .setData({
+        medicineName: {
+          'container_slot': slot,
+          'registration_date': DateTime.now().toString(),
+          'alarms': [],
+          'assumptions_dates': []
+        }
+      });
+    }
+    else{
+      await _databaseReference
+          .collection("medicines")
+          .document("$_username")
+          .updateData({
+        medicineName: {
+          'container_slot': slot,
+          'registration_date': DateTime.now().toString(),
+          'alarms': [],
+          'assumptions_dates': []
+        }
+      });
+    }
   }
 
   Future<Map> getMedicines() async {
