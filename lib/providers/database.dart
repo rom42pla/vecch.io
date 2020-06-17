@@ -165,7 +165,7 @@ class DatabaseProvider {
       await _databaseReference
           .collection("medicines")
           .document("$_username")
-          .setData({
+          .updateData({
         medicineName: {
           'container_slot': slot,
           'registration_date': DateTime.now().toString(),
