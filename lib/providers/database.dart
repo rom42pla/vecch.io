@@ -252,4 +252,27 @@ class DatabaseProvider {
         .document("$_username")
         .updateData(_oldData);
   }
+
+  Future<Map> getNotification() async {
+    String _username =
+        (await getLoggedUserCredentialsFromLocalStorage())["username"];
+    Map notification = new Map();
+    await _databaseReference
+        .collection("notifications")
+        .document("$_username")
+        .get()
+        .then((value) => notification = value.data);
+    if(notification == null) notification = new Map();
+    return notification;
+  }
+
+  Future<void> deleteNotification(String titolo, String descrizione) async {
+    try {
+      String _username =
+      (await getLoggedUserCredentialsFromLocalStorage())["username"];
+      await _databaseReference.collection('notifications').document("$_username").setData({});
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
