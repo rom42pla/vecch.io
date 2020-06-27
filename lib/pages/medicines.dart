@@ -46,6 +46,9 @@ class _MedicinesPageState extends State<MedicinesPage> {
                       DateTime.parse(_medicines[_name]["registration_date"]);
                   int _containerSlot = _medicines[_name]["container_slot"];
                   List _alarms = _medicines[_name]["alarms"];
+                  String _schedule = _medicines[_name]["schedule"];
+                  String _scheduleDay = _medicines[_name]["scheduleDay"];
+                  String _scheduleHour = _medicines[_name]["scheduleHour"];
 
                   /// widget definition
                   _medicinesWidgets.add(Card(
@@ -72,6 +75,18 @@ class _MedicinesPageState extends State<MedicinesPage> {
                           leading: Icon(Icons.radio),
                           title: Text('Slot on vecch.io device'),
                           trailing: Text(_containerSlot.toString())),
+                      ListTile(
+                          leading: Icon(Icons.access_time),
+                          title: Text('Scheduled medicines'),
+                          trailing: Text(_schedule.toString())),
+                      ListTile(
+                          leading: Icon(Icons.access_time),
+                          title: Text('Scheduled Day'),
+                          trailing: Text(_scheduleDay.toString())),
+                      ListTile(
+                          leading: Icon(Icons.access_time),
+                          title: Text('Scheduled Hour'),
+                          trailing: Text(_scheduleHour.toString())),
                       ListTile(
                         leading: Icon(Icons.alarm),
                         title: Text('Alarms'),
@@ -177,6 +192,10 @@ class AddMedicineDialog extends StatefulWidget {
 class _AddMedicineDialogState extends State<AddMedicineDialog> {
   String _medicineName = "";
   int _slot = 1;
+  String _schedule = 'on a day of the week';
+  String _scheduleDay = 'Monday';
+  String _scheduleHour = "11:00";
+  
 
   Widget build(BuildContext context) {
     return Dialog(
@@ -223,6 +242,59 @@ class _AddMedicineDialogState extends State<AddMedicineDialog> {
               },
             ),
           ),
+          ListTile(
+            //leading: Icon(Icons.radio),
+            title: Text("How often?"),
+            trailing: DropdownButton<String>(
+              value: _schedule,
+              items: <String>['on a day of the week', 'twice a week'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (_newSchedule) {
+                setState(() {
+                  _schedule = _newSchedule;
+                });
+              },
+            ),
+          ),
+          ListTile(
+            //leading: Icon(Icons.radio),
+            title: Text("On which day?"),
+            trailing: DropdownButton<String>(
+              value: _scheduleDay,
+              items: <String>['Monday', 'Thusday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (_newScheduleDay) {
+                setState(() {
+                  _scheduleDay = _newScheduleDay;
+                });
+              },
+            ),
+          ),
+          ListTile(
+            title: TextFormField(
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                isDense: true,
+                border: OutlineInputBorder(),
+                labelText: _scheduleHour,
+              ),
+              autocorrect: false,
+              onChanged: (_newscheduleHour) {
+                setState(() {
+                  _scheduleHour = _newscheduleHour;
+                });
+              },
+            ),
+            leading: Text("On which hour?", style: TextStyle(fontSize: 16.0)),
+          ),
           ButtonBar(children: <Widget>[
             FlatButton(
               child: Text("CANCEL"),
@@ -235,7 +307,7 @@ class _AddMedicineDialogState extends State<AddMedicineDialog> {
                 onPressed: (_medicineName != "")
                     ? () async {
                         await DatabaseProvider().addMedicine(
-                            medicineName: _medicineName, slot: _slot);
+                            medicineName: _medicineName, slot: _slot, schedule: _schedule, scheduleDay: _scheduleDay, scheduleHour: _scheduleHour);
                         Navigator.pop(context);
                       }
                     : null),
