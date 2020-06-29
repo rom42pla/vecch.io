@@ -33,6 +33,9 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
+                        Image(image: AssetImage('assets/logo.png')),
+                        SizedBox(height: 4 * _spacing),
+
                         TextFormField(
                           obscureText: false,
                           autocorrect: false,

@@ -365,7 +365,17 @@ class _AddMedicineDialogState extends State<AddMedicineDialog> {
               },
             ),
           ),
+
+          ListTile(
+            leading: Icon(Icons.alarm),
+            title: Text("First alarm for this medicine", style: TextStyle(color: Colors.grey)),
+          ),
+
           ..._alarmInAddMedicine(),
+          ListTile(
+            title: Text("You can add more alarms by editing the medicine in the main screen",
+                style: TextStyle(color: Colors.grey, fontSize: 12)),
+          ),
           ButtonBar(children: <Widget>[
             FlatButton(
               child: Text("CANCEL"),

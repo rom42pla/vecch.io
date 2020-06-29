@@ -62,6 +62,8 @@ class _VecchioAppState extends State<VecchioApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      debugShowMaterialGrid: false,
       title: 'vecch.io',
       theme: new ThemeData(
         primaryColor: Colors.green,
