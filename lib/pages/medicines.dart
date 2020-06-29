@@ -352,7 +352,7 @@ class _AddMedicineDialogState extends State<AddMedicineDialog> {
             title: Text("Slot on vecch.io device"),
             trailing: DropdownButton<String>(
               value: _slot.toString(),
-              items: <String>['1', '2', '3', '4'].map((String value) {
+              items: <String>['1', '2'].map((String value) {
                 return new DropdownMenuItem<String>(
                   value: value,
                   child: new Text(value),
@@ -493,7 +493,7 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
           title: Text("Slot on vecch.io device"),
           trailing: DropdownButton<String>(
             value: _containerSlot.toString(),
-            items: <String>['1', '2', '3', '4'].map((String value) {
+            items: <String>['1', '2'].map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
