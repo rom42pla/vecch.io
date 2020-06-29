@@ -158,9 +158,11 @@ class DatabaseProvider {
   /// Medicines
   ///
   ///
-  Future<void> addMedicine({String medicineName, int slot, String schedule, String scheduleDay, String scheduleHour}) async {
+  Future<void> addMedicine({String medicineName, int slot, Map alarmMap}) async {
     String _username =
         (await getLoggedUserCredentialsFromLocalStorage())["username"];
+    List alarm = [];
+    alarm.add(alarmMap);
     if (!(await getMedicines()).containsKey(medicineName)){
       await _databaseReference
           .collection("medicines")
@@ -169,11 +171,8 @@ class DatabaseProvider {
         medicineName: {
           'container_slot': slot,
           'registration_date': DateTime.now().toString(),
-          'alarms': [],
-          'assumptions_dates': [],
-          'schedule': schedule,
-          'scheduleDay': scheduleDay,
-          'scheduleHour': scheduleHour
+          'alarms': alarm,
+          'assumptions_dates': []
         }
       });
     }
@@ -185,11 +184,8 @@ class DatabaseProvider {
         medicineName: {
           'container_slot': slot,
           'registration_date': DateTime.now().toString(),
-          'alarms': [],
-          'assumptions_dates': [],
-          'schedule': schedule,
-          'scheduleDay': scheduleDay,
-          'scheduleHour': scheduleHour
+          'alarms': alarm,
+          'assumptions_dates': []
         }
       });
     }
