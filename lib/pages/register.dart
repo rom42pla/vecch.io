@@ -17,6 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String _password = "";
   String _name = "";
   String _surname = "";
+  double _spacing = 20;
 
   Widget build(BuildContext context) {
     return Scaffold(

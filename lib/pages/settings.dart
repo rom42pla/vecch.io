@@ -52,9 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         "/" +
                         _registrationDate.day.toString() +
                         "/" +
-                        _registrationDate.year.toString() +
-                        "\n"
-                            "3 medicines registered"),
+                        _registrationDate.year.toString()),
                     isThreeLine: true,
                   ),
                   ButtonBar(

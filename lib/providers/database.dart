@@ -158,18 +158,20 @@ class DatabaseProvider {
   /// Medicines
   ///
   ///
-  Future<void> addMedicine({String medicineName, int slot}) async {
+  Future<void> addMedicine({String medicineName, int slot, Map alarmMap}) async {
     String _username =
         (await getLoggedUserCredentialsFromLocalStorage())["username"];
+    List alarm = [];
+    alarm.add(alarmMap);
     if (!(await getMedicines()).containsKey(medicineName)){
       await _databaseReference
           .collection("medicines")
           .document("$_username")
-          .setData({
+          .updateData({
         medicineName: {
           'container_slot': slot,
           'registration_date': DateTime.now().toString(),
-          'alarms': [],
+          'alarms': alarm,
           'assumptions_dates': []
         }
       });
@@ -182,7 +184,7 @@ class DatabaseProvider {
         medicineName: {
           'container_slot': slot,
           'registration_date': DateTime.now().toString(),
-          'alarms': [],
+          'alarms': alarm,
           'assumptions_dates': []
         }
       });
@@ -251,5 +253,28 @@ class DatabaseProvider {
         .collection("medicines")
         .document("$_username")
         .updateData(_oldData);
+  }
+
+  Future<Map> getNotification() async {
+    String _username =
+        (await getLoggedUserCredentialsFromLocalStorage())["username"];
+    Map notification = new Map();
+    await _databaseReference
+        .collection("notifications")
+        .document("$_username")
+        .get()
+        .then((value) => notification = value.data);
+    if(notification == null) notification = new Map();
+    return notification;
+  }
+
+  Future<void> deleteNotification(String titolo, String descrizione) async {
+    try {
+      String _username =
+      (await getLoggedUserCredentialsFromLocalStorage())["username"];
+      await _databaseReference.collection('notifications').document("$_username").setData({});
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

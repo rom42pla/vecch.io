@@ -46,7 +46,7 @@ class _MedicinesPageState extends State<MedicinesPage> {
                       DateTime.parse(_medicines[_name]["registration_date"]);
                   int _containerSlot = _medicines[_name]["container_slot"];
                   List _alarms = _medicines[_name]["alarms"];
-
+     
                   /// widget definition
                   _medicinesWidgets.add(Card(
                       child: ExpansionTile(
@@ -178,6 +178,148 @@ class _AddMedicineDialogState extends State<AddMedicineDialog> {
   String _medicineName = "";
   int _slot = 1;
 
+  List _setAlarmAddMedicine = List<Widget>();
+  String _newAlarmType = 'on a day of the week';
+  DateTime _newAlarmOnceDay = DateTime.now();
+  String _newAlarmWeekDay = 'monday';
+  int _newAlarmMonthDay = 1;
+  TimeOfDay _newAlarmHour = TimeOfDay(hour: TimeOfDay.now().hour, minute: 0);
+
+  List <Widget> _alarmInAddMedicine(){
+
+    List _setAlarmAddMedicine = List<Widget>();
+
+    ///
+    /// how many times
+    _setAlarmAddMedicine.add(ListTile(
+        title: Text("How many times?"),
+        trailing: DropdownButton<String>(
+          value: _newAlarmType,
+          items: <String>[
+            'just once',
+            'on a day of the week',
+            'on a day of the month'
+          ].map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (_type) {
+            setState(() {
+              _newAlarmType = _type;
+            });
+          },
+        )));
+
+    ///
+    /// time setting: just once
+    ///
+    switch (_newAlarmType) {
+      case "just once":
+        {
+          /// day
+          _setAlarmAddMedicine.add(ListTile(
+            title: Text("On what day?"),
+            trailing: OutlineButton(
+              child: Text(_newAlarmOnceDay.month.toString() +
+                  "/" +
+                  _newAlarmOnceDay.day.toString() +
+                  "/" +
+                  _newAlarmOnceDay.year.toString()),
+              onPressed: () async {
+                DateTime _chosenDate = await showDatePicker(
+                    context: context,
+                    initialDate: _newAlarmOnceDay,
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(DateTime.now().year + 2));
+                setState(() {
+                  _newAlarmOnceDay =
+                      (_chosenDate != null) ? _chosenDate : _newAlarmOnceDay;
+                });
+              },
+            ),
+          ));
+          break;
+        }
+      case "on a day of the week":
+        {
+          _setAlarmAddMedicine.add(ListTile(
+              title: Text("On which day?"),
+              trailing: DropdownButton<String>(
+                value: _newAlarmWeekDay,
+                items: <String>[
+                  'monday',
+                  'tuesday',
+                  'wednesday',
+                  'thursday',
+                  'friday',
+                  'saturday',
+                  'sunday'
+                ].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (_day) {
+                  setState(() {
+                    _newAlarmWeekDay = _day;
+                  });
+                },
+              )));
+          break;
+        }
+      case "on a day of the month":
+        {
+          {
+            List<String> _monthDays = List<String>();
+            new List<int>.generate(31, (i) => i + 1)
+                .forEach((element) => _monthDays.add(element.toString()));
+            _setAlarmAddMedicine.add(ListTile(
+                title: Text("On which day?"),
+                trailing: DropdownButton<String>(
+                  value: _newAlarmMonthDay.toString(),
+                  items: _monthDays.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (_day) {
+                    setState(() {
+                      _newAlarmMonthDay = int.parse(_day);
+                    });
+                  },
+                )));
+            break;
+          }
+        }
+    }
+
+    /// hour
+    _setAlarmAddMedicine.add(ListTile(
+      title: Text("On which hour?"),
+      trailing: OutlineButton(
+        child: Text(_newAlarmHour.hour.toString().padLeft(2, "0") +
+            ":" +
+            _newAlarmHour.minute.toString().padLeft(2, "0")),
+        onPressed: () async {
+          TimeOfDay _chosenHour = await showTimePicker(
+              context: context, initialTime: _newAlarmHour);
+          setState(() {
+            _newAlarmHour =
+                (_chosenHour != null) ? _chosenHour : _newAlarmHour;
+          });
+        },
+      ),
+    ));
+
+    return _setAlarmAddMedicine;
+  }
+
+
+
   Widget build(BuildContext context) {
     return Dialog(
       child: Column(
@@ -210,7 +352,7 @@ class _AddMedicineDialogState extends State<AddMedicineDialog> {
             title: Text("Slot on vecch.io device"),
             trailing: DropdownButton<String>(
               value: _slot.toString(),
-              items: <String>['1', '2', '3', '4'].map((String value) {
+              items: <String>['1', '2'].map((String value) {
                 return new DropdownMenuItem<String>(
                   value: value,
                   child: new Text(value),
@@ -223,6 +365,17 @@ class _AddMedicineDialogState extends State<AddMedicineDialog> {
               },
             ),
           ),
+
+          ListTile(
+            leading: Icon(Icons.alarm),
+            title: Text("First alarm for this medicine", style: TextStyle(color: Colors.grey)),
+          ),
+
+          ..._alarmInAddMedicine(),
+          ListTile(
+            title: Text("You can add more alarms by editing the medicine in the main screen",
+                style: TextStyle(color: Colors.grey, fontSize: 12)),
+          ),
           ButtonBar(children: <Widget>[
             FlatButton(
               child: Text("CANCEL"),
@@ -234,8 +387,50 @@ class _AddMedicineDialogState extends State<AddMedicineDialog> {
                 child: Text("ADD MEDICINE"),
                 onPressed: (_medicineName != "")
                     ? () async {
+
+                      Map _alarm;
+                      switch (_newAlarmType) {
+                        case "just once":
+                          {
+                            _alarm = {
+                              "type": "once",
+                              "day": _newAlarmOnceDay.year.toString() +
+                                  "/" +
+                                  _newAlarmOnceDay.month.toString().padLeft(2, "0") +
+                                  "/" +
+                                  _newAlarmOnceDay.day.toString().padLeft(2, "0"),
+                              "hour": _newAlarmHour.hour.toString().padLeft(2, "0") +
+                                  ":" +
+                                  _newAlarmHour.minute.toString().padLeft(2, "0")
+                            };
+                            break;
+                          }
+                        case "on a day of the week":
+                          {
+                            _alarm = {
+                              "type": "weekly",
+                              "day": _newAlarmWeekDay,
+                              "hour": _newAlarmHour.hour.toString().padLeft(2, "0") +
+                                  ":" +
+                                  _newAlarmHour.minute.toString().padLeft(2, "0")
+                            };
+                            break;
+                          }
+                        case "on a day of the month":
+                          {
+                            _alarm = {
+                              "type": "monthly",
+                              "day": _newAlarmMonthDay,
+                              "hour": _newAlarmHour.hour.toString().padLeft(2, "0") +
+                                  ":" +
+                                  _newAlarmHour.minute.toString().padLeft(2, "0")
+                            };
+                          }
+                          break;
+                        }
+            
                         await DatabaseProvider().addMedicine(
-                            medicineName: _medicineName, slot: _slot);
+                            medicineName: _medicineName, slot: _slot, alarmMap: _alarm);
                         Navigator.pop(context);
                       }
                     : null),
@@ -308,7 +503,7 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
           title: Text("Slot on vecch.io device"),
           trailing: DropdownButton<String>(
             value: _containerSlot.toString(),
-            items: <String>['1', '2', '3', '4'].map((String value) {
+            items: <String>['1', '2'].map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
